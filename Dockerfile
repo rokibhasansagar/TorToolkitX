@@ -1,6 +1,6 @@
 #________________________________________________________________________________________________________________________
 # Insatll Some Required Files and Tools for TTK
-FROM fr3akyphantom/ttk_base:latest
+FROM fr3akyphantom/ttk_multiplatform:latest
 #________________________________________________________________________________________________________________________
 # Install TTK Python Requirements.
 COPY requirements.txt .
