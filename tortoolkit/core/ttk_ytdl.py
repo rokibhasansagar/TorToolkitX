@@ -230,7 +230,7 @@ async def handle_ytdl_callbacks(e: MessageLike):
                 buttons = list()
                 if data[1] == "audios":
                     for i in ["64K", "128K", "320K"]:
-                        text = f"{i} [MP3]"
+                        text = f"{i} [OPUS]"
                         cdata = f"ytdldfile|{i}|{e.sender_id}|{data[3]}|{data[4]}"
                         buttons.append(
                             [KeyboardButtonCallback(text, cdata.encode("UTF-8"))]
@@ -336,13 +336,13 @@ async def handle_ytdl_file_download(e: MessageLike):
                                 is_audio = True
 
             if data[1].endswith("K"):
-                cmd = f"yt-dlp -i --extract-audio --add-metadata --audio-format mp3 --audio-quality {data[1]} -o '{op_dir}/%(title)s.%(ext)s' {yt_url}"
+                cmd = f"yt-dlp -i --extract-audio --add-metadata --audio-format opus --recode-video "opus>opus/webm" --audio-quality {data[1]} -o '{op_dir}/%(title)s.%(ext)s' {yt_url}"
 
             else:
                 if is_audio:
                     cmd = f"yt-dlp --continue --embed-subs --no-warnings --hls-prefer-ffmpeg --prefer-ffmpeg -f {data[1]} -o {op_dir}/%(title)s.%(ext)s {yt_url}"
                 else:
-                    cmd = f"yt-dlp --continue --embed-subs --no-warnings --hls-prefer-ffmpeg --prefer-ffmpeg -f {data[1]}+bestaudio[ext=m4a]/best -o {op_dir}/%(title)s.%(ext)s {yt_url}"
+                    cmd = f"yt-dlp --continue --embed-subs --no-warnings --hls-prefer-ffmpeg --prefer-ffmpeg -f {data[1]}+bestaudio[ext=opus]/best -o {op_dir}/%(title)s.%(ext)s {yt_url}"
 
             out, err = await cli_call(cmd)
 
@@ -553,7 +553,7 @@ async def handle_ytdl_playlist_down(e: MessageLike) -> None:
         url = pldata.get("webpage_url")
 
         if data[1].endswith("k"):
-            audcmd = f"yt-dlp -i --extract-audio --add-metadata --audio-format mp3 --audio-quality {data[1]} -o '{opdir}/%(playlist_index)s - %(title)s.%(ext)s' {url}"
+            audcmd = f"yt-dlp -i --extract-audio --add-metadata --audio-format opus --recode-video "opus>opus/webm" --audio-quality {data[1]} -o '{opdir}/%(playlist_index)s - %(title)s.%(ext)s' {url}"
             out, err = await cli_call(audcmd)
 
             ofiles = len(os.listdir(opdir))
@@ -581,9 +581,9 @@ async def handle_ytdl_playlist_down(e: MessageLike) -> None:
 
         else:
             if data[1] == "best":
-                vidcmd = f"yt-dlp -i --continue --embed-subs --no-warnings --prefer-ffmpeg -f 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best' -o '{opdir}/%(playlist_index)s - %(title)s.%(ext)s' {url}"
+                vidcmd = f"yt-dlp -i --continue --embed-subs --no-warnings --prefer-ffmpeg -f 'bestvideo[ext=mp4]+bestaudio[ext=opus]/best' -o '{opdir}/%(playlist_index)s - %(title)s.%(ext)s' {url}"
             else:
-                vidcmd = f"yt-dlp -i --continue --embed-subs --no-warnings --prefer-ffmpeg -f 'bestvideo[ext=mp4][height<={data[1]}]+bestaudio[ext=m4a]/best' -o '{opdir}/%(playlist_index)s - %(title)s.%(ext)s' {url}"
+                vidcmd = f"yt-dlp -i --continue --embed-subs --no-warnings --prefer-ffmpeg -f 'bestvideo[ext=mp4][height<={data[1]}]+bestaudio[ext=opus]/best' -o '{opdir}/%(playlist_index)s - %(title)s.%(ext)s' {url}"
             out, err = await cli_call(vidcmd)
 
             ofiles = len(os.listdir(opdir))
